@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
 
@@ -35,30 +35,60 @@ export default function Profile() {
       })
   }, [navigate])
 
-  if (loading) return <div>Cargando perfil...</div>
-  if (error) return <div>{error}</div>
+  const handleLogout = () => {
+    localStorage.removeItem('cine_token')
+    navigate('/login')
+  }
+
+  if (loading) return <div style={{padding:40}}>Cargando perfil...</div>
+  if (error) return <div style={{padding:40, color:'red'}}>{error}</div>
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Perfil del Usuario</h2>
-      {user ? (
-        <div
-          style={{
-            marginTop: 20,
-            padding: 20,
-            border: '1px solid #ccc',
-            borderRadius: 8,
-            maxWidth: 400,
-          }}
-        >
-          <p><b>ID:</b> {user.id}</p>
-          <p><b>Nombre:</b> {user.name}</p>
-          <p><b>Email:</b> {user.email}</p>
-          <p><b>Creado en:</b> {new Date(user.createdAt).toLocaleString()}</p>
+    <div style={{padding:40, background:'#fdfdfd', height:'100vh'}}>
+      <div style={{
+        maxWidth:500, margin:'0 auto', background:'#fff',
+        padding:30, borderRadius:12, boxShadow:'0 4px 15px rgba(0,0,0,0.1)'
+      }}>
+        <h2 style={{color:'#2c3e50'}}>👤 Perfil</h2>
+        {user ? (
+          <div style={{marginTop:20, fontSize:16}}>
+            <p><b>ID:</b> {user.id}</p>
+            <p><b>Nombre:</b> {user.name}</p>
+            <p><b>Email:</b> {user.email}</p>
+          </div>
+        ) : (
+          <div>No hay usuario autenticado</div>
+        )}
+
+        <div style={{marginTop:30}}>
+          <Link 
+            to="/dashboard" 
+            style={{
+              padding:'10px 20px',
+              background:'#3498db',
+              color:'#fff',
+              borderRadius:8,
+              textDecoration:'none',
+              marginRight:10
+            }}
+          >
+            ← Volver al Dashboard
+          </Link>
+          <button 
+            onClick={handleLogout}
+            style={{
+              padding:'10px 20px',
+              background:'#e74c3c',
+              color:'#fff',
+              border:'none',
+              borderRadius:8,
+              cursor:'pointer'
+            }}
+          >
+            Cerrar sesión
+          </button>
         </div>
-      ) : (
-        <div>No hay usuario autenticado</div>
-      )}
+      </div>
     </div>
   )
 }
